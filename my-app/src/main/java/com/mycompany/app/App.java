@@ -6,11 +6,18 @@ package com.mycompany.app;
  */
 public class App 
 {
+    // static final double n = 2.0; //Кол-во потоков
+    // static final double λ = 4.0; //Поток покупателей
+    // static final double tService = 5.0; //Время обслуживания (минуты)
+    // static final double m = 6.0; //Длина очереди
+    // static final double μ = 1.0/tService; //Интенсивность обслуживания
+
     static final double n = 2.0; //Кол-во потоков
     static final double λ = 4.0; //Поток покупателей
     static final double tService = 5.0; //Время обслуживания (минуты)
     static final double m = 6.0; //Длина очереди
     static final double μ = 1.0/tService; //Интенсивность обслуживания
+
     static final double ρ = (double) λ/μ; //Показатель нагрузки системы
     public static void main( String[] args )
     {
@@ -29,12 +36,12 @@ public class App
         q = 1.0 - pDec;
         a = (double) λ * q;
         nBusy = (double) ρ * q;
-        nFree = (double) n - nBusy;
+        nFree = (double) Math.abs(n - nBusy);
         tSys = tQ + (double) q / μ;
-        kBusy = (double) nBusy / nFree;
+        kBusy = nBusy / n;
         kFree = (double) 1 - kBusy;
         System.out.println("Вероятность простоя системы: ");
-        System.out.printf("P0 = %.7f\n", p0);
+        System.out.printf("P0 = %.12f\n", p0);
         System.out.println("Вероятность образования очереди: ");
         System.out.printf("Pоч = %.7f\n", pQ);
         System.out.println("Вероятность отказа: ");
@@ -60,9 +67,12 @@ public class App
     }
 
     public static double calcP0(){
-        double res = 0.0;
-        for (double i = 0.0; i < n; i = i + 1.0) {
-            res += (double) ((double) Math.pow(ρ, i)/factorialUsingForLoop((int) i)) + ((double) Math.pow(ρ, n + 1)/((double) factorialUsingForLoop((int) n) * (n - ρ)))*(1.0 - Math.pow(ρ / n, m));
+        double res = 1.0;
+        for (double i = 1.0; i <= n; i += 1.0) {
+            res += (double) ((double) Math.pow(ρ, i)/factorialUsingForLoop((int) i));
+        }
+        for (double j = 1.0; j <= m; j += 1.0){
+            res += (double) ((double) Math.pow(ρ, n + j)/(factorialUsingForLoop((int) n) * Math.pow(n, j)));
         }
         res = 1.0 / res;
         return res;
